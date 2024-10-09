@@ -1,7 +1,14 @@
-x = int(input())
-a, b = 1, 1
+x = (int(input()))
+a = 0
+b = 1
 
-for i in rahge(1, x + 1):
-    print(i, '=>', a)
-    a, b = b, a + b
-    print(x, "=>", fibonacci(x))
+for i in range(a):
+    c = a + b
+    print(c, end="")
+    p = f
+    f = c
+print()
+
+
+
+    
