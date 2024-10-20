@@ -1,14 +1,13 @@
-x = (int(input()))
-a = 0
-b = 1
+f1 = 0
+f2 = 1
+fib = []
+for x in range(0, 6):
+    f1, f2 = f2, f2 + f1
+    fib.append(f2)
 
-for i in range(a):
-    c = a + b
-    print(c, end="")
-    p = f
-    f = c
-print()
-
-
+print(fib)
+    
 
     
+
+
