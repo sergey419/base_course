@@ -9,3 +9,9 @@ print(V)
 
 
 
+import numpy as np
+T = 200
+э = 300
+N =
+print(N)
+
