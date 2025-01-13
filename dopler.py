@@ -1,97 +1,82 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation, PillowWriter
-import os
+import matplotlib.animation as animation
+import numpy as np
 
 # Constants
-fig_width = 8
-fig_height = 6
-x_min, x_max = -10, 10
-y_min, y_max = -2, 2
-num_points = 500
-frame_interval = 50
-animation_duration = 300
-wave_speed = 1.0
-source_speed = 0.5
+c = 1  # speed of sound (normalized)
+freq0 = 1.0   # original frequency
+car_start_x = 0
+car_start_y = -1.2
+car_speed = 0.03  # normalized car speed
+max_radius = 3.5
+num_frames = 150
+road_y = -2.0
+person_A_x = -4
+person_B_x = 4
 
-def doppler_effect(time, source_x, source_speed, wave_speed, frequency_hz = 1):
-    """Simulates the doppler effect.
 
-    Args:
-        time: the time from the start of the simulation
-        source_x: the x position of the wave source
-        source_speed: the speed of the source
-        wave_speed: the speed of the wave
-        frequency_hz: the source frequency
+# Setup the plot
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.set_xlim(-6, 6)
+ax.set_ylim(-5, 3)
+ax.set_aspect('equal')
+ax.set_xticks([])
+ax.set_yticks([])
+ax.set_facecolor('skyblue')
+ax.set_title("Doppler Effect Animation")
 
-    Returns:
-      a tuple of the x positions, and wave positions for each value of x
-    """
-    # Calculate frequency using time and the formula
-    wave_frequency_hz = frequency_hz * (wave_speed - source_speed) / wave_speed
-    wave_frequency_rad = 2*np.pi*wave_frequency_hz
+# Add road
+ax.plot([-6, 6], [road_y, road_y], color='grey', linewidth=4)
+ax.plot([-6,6],[road_y-0.3, road_y-0.3], color = 'white', linestyle='--')
+ax.plot([-6,6],[road_y+0.3, road_y+0.3], color = 'white', linestyle='--')
 
-    # Create the x axis
-    x = np.linspace(x_min, x_max, num_points)
+#Add people A and B
+ax.plot(person_A_x, -2, marker="o", markersize = 10, color="black")
+ax.text(person_A_x, -1, "A")
 
-    # Calculate the wave position in space
-    y = np.sin(wave_frequency_rad * (x - source_x) / wave_speed)
+ax.plot(person_B_x, -2, marker="o", markersize = 10, color="black")
+ax.text(person_B_x, -1, "B")
 
+# Add car
+car, = ax.plot([],[],marker='o',markersize = 10, color = 'red')
+
+# Wave circles
+wave_circles = []
+wave_lines = []
+for i in range(7):
+    circle, = ax.plot([], [], color='black', linestyle='-',fillstyle='none')
+    wave_circles.append(circle)
+
+
+def create_wavefront(center_x, center_y, radius, num_points=100):
+    angles = np.linspace(0, 2*np.pi, num_points)
+    x = center_x + radius * np.cos(angles)
+    y = center_y + radius * np.sin(angles)
     return x, y
 
-def update(frame):
-    ax.clear()
-    ax.set_xlim(x_min, x_max)
-    ax.set_ylim(y_min, y_max)
-    ax.set_xlabel('Position (x)')
-    ax.set_ylabel('Wave Amplitude')
-    ax.set_title('Doppler Effect')
-    ax.grid(True)
-
-    # Calculate source position
-    source_x = -source_speed * frame
-    x, y = doppler_effect(frame, source_x, source_speed, wave_speed)
-
-    # Plot the wave
-    ax.plot(x, y, color='blue')
-
-    # Plot the source
-    ax.plot(source_x, 0, marker='o', markersize=10, color='red', label="Source")
-
-    ax.legend()
-    return ax,
-
-# Set up the figure and axes
-fig = plt.figure(figsize=(fig_width, fig_height), dpi=200)
-ax = fig.add_subplot(111)
+# Animation function
+def animate(frame):
+  car_x = car_start_x + frame * car_speed
+  car.set_data([car_x],[car_start_y])
+  
+  time = frame/15
+  v = car_speed  # Source velocity
+    
+  for i, circle in enumerate(wave_circles):
+    radius = c * (time - (i/freq0))
+    if radius > 0 and radius < max_radius :
+      lambda_wave = (2*np.pi*c/(2*np.pi*freq0))
+      x,y = create_wavefront(car_x-v*(time-(i/freq0)), car_start_y, radius)
+      circle.set_data(x,y)
+    else :
+       circle.set_data([],[])
+  return car, *wave_circles
 
 
-# Animation setup
-ani = FuncAnimation(fig, update, frames=np.arange(animation_duration), interval=frame_interval, blit=False)
+# Create the animation
+ani = animation.FuncAnimation(fig, animate, frames=num_frames, interval=50, blit=True)
 
-# Attempt to save the animation to a GIF file
-try:
-    from matplotlib.animation import PillowWriter
-    writer = PillowWriter(fps=20)  # Using PillowWriter directly
-    ani.save("doppler_effect.gif", writer=writer, dpi=200)
-    print("Animation saved to doppler_effect.gif")
-except Exception as e:
-    print(f"Error saving animation to GIF: {e}")
-    exit()
-
-# Attempt to save the script to a file
-try:
-    # Get the current script's filename and read its content
-    current_script_path = os.path.abspath(__file__)
-    with open(current_script_path, 'r') as f:
-        script_code = f.read()
-
-    # Save the script to a new file
-    with open("doppler_effect.py", "w") as f:
-        f.write(script_code)
-    print("Script saved to doppler_effect.py")
-except Exception as e:
-    print(f"Error saving script: {e}")
-    exit()
+# Save the animation as a GIF
+ani.save('doppler_effect.gif', writer='pillow', fps=30)
 
 plt.show()
