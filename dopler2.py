@@ -17,7 +17,7 @@ person_y_offset = 0.5  # Offset for the people from the road
 text_x_offset = 0.2    # Offset of text from the markers
 
 
-# Setup the plot
+# Настройка сюжета
 fig, ax = plt.subplots(figsize=(8, 6))
 ax.set_xlim(-6, 6)
 ax.set_ylim(-5, 3)
@@ -27,22 +27,22 @@ ax.set_yticks([])
 ax.set_facecolor('skyblue')
 ax.set_title("Doppler Effect Animation")
 
-# Add road
+# Создание дороги
 ax.plot([-6, 6], [road_y, road_y], color='grey', linewidth=4)
 ax.plot([-6,6],[road_y-0.3, road_y-0.3], color = 'white', linestyle='--')
 ax.plot([-6,6],[road_y+0.3, road_y+0.3], color = 'white', linestyle='--')
 
-#Add people A and B
+# Создание человека А и В
 ax.plot(person_A_x, road_y + person_y_offset, marker="o", markersize = 10, color="black")
 ax.text(person_A_x+text_x_offset, road_y + person_y_offset, "A")
 
 ax.plot(person_B_x, road_y + person_y_offset, marker="o", markersize = 10, color="black")
 ax.text(person_B_x+text_x_offset, road_y + person_y_offset, "B")
 
-# Add car
+# Создание машины
 car, = ax.plot([],[],marker='o',markersize = 10, color = 'red')
 
-# Wave circles
+# Волновые круги
 wave_circles = []
 wave_lines = []
 for i in range(7):
@@ -56,7 +56,7 @@ def create_wavefront(center_x, center_y, radius, num_points=100):
     y = center_y + radius * np.sin(angles)
     return x, y
 
-# Animation function
+# Функция анимации
 def animate(frame):
   car_x = car_start_x + frame * car_speed
   car.set_data([car_x], [car_y])  # Car is always on the road (car_y)
