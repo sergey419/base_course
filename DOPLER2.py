@@ -2,22 +2,22 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 
-# Constants
-c = 1  # speed of sound (normalized)
-freq0 = 1.0   # original frequency
+# Константы
+c = 1  # скорость звука
+freq0 = 1.0   # исходная частота
 car_start_x = -6
-car_y = -2.0  # Y-position of the road
-# Calculate the distance the car needs to travel
+car_y = -2.0  # Y-положение на дороге
+# Рассчет расстояния которое должен проехать автомобиль
 road_length = 6 - (-6)
-# Adjust the car speed and number of frames
-car_speed = 0.1  # normalized car speed (increased speed slightly)
+# Регулировка скорости автомобиля и количество кадров
+car_speed = 0.1  # нормализованная скорость автомобиля
 max_radius = 3.5
-num_frames = int(road_length / car_speed) + 10 # Calculate num_frames for the car to reach the end of the road + some buffer 
+num_frames = int(road_length / car_speed) + 10 # Вычисление количества кадров, за которые автомобиль достигнет дороги
 road_y = -2.0
 person_A_x = -4
 person_B_x = 4
-person_y_offset = 0.5  # Offset for the people from the road
-text_x_offset = 0.2    # Offset of text from the markers
+person_y_offset = 0.5  # Смещение людей от дороги
+text_x_offset = 0.2    # Смещение текста от маркеров
 
 
 # Настройка сюжета
@@ -62,10 +62,10 @@ def create_wavefront(center_x, center_y, radius, num_points=100):
 # Функция анимации
 def animate(frame):
   car_x = car_start_x + frame * car_speed
-  car.set_data([car_x], [car_y])  # Car is always on the road (car_y)
+  car.set_data([car_x], [car_y])  # Машина всегда в пути (car_y)
   
   time = frame/15
-  v = car_speed  # Source velocity
+  v = car_speed  # Скорость источника
     
   for i, circle in enumerate(wave_circles):
     radius = c * (time - (i/freq0))
@@ -79,10 +79,10 @@ def animate(frame):
 
 
 
-# Create the animation
+# Создание анимации
 ani = animation.FuncAnimation(fig, animate, frames=num_frames, interval=50, blit=True)
 
-# Save the animation as a GIF
+# Создание анимации как гифки
 ani.save('doppler_effect.gif', writer='pillow', fps=30)
 
 plt.show()
