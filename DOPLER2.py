@@ -55,7 +55,7 @@ for i in range(7):
 
 def create_wavefront(center_x, center_y, radius, num_points=100):
     angles = np.linspace(0, 2*np.pi, num_points)
-    x = center_x + radius * np.cos(angles)
+    x = center_x - radius / 2 + radius * np.cos(angles)
     y = center_y + radius * np.sin(angles)
     return x, y
 
